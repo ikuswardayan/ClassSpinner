@@ -688,20 +688,27 @@ $(function () {
     // Unlock / resume Web Audio context on user draw gesture
     getAudioContext();
 
+    // Check for prefers-reduced-motion preference
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const spinDuration = prefersReducedMotion ? 120 : 2200;
+
     // show slot modal
     $("#modalSlot").modal("show");
     const slotElements = [$("#slot1"), $("#slot2"), $("#slot3")];
     const namePool = eligibleCandidates.map(candidate => candidate.name || candidate.idNumber);
     let animationIntervals = [];
-    slotElements.forEach((element, slotIndex) => {
-      animationIntervals[slotIndex] = setInterval(() => {
-        const randomName = namePool[Math.floor(Math.random() * namePool.length)];
-        element.text(randomName);
-        if (slotIndex === 1) {
-          playTickSound();
-        }
-      }, 80 + slotIndex * 20);
-    });
+
+    if (!prefersReducedMotion) {
+      slotElements.forEach((element, slotIndex) => {
+        animationIntervals[slotIndex] = setInterval(() => {
+          const randomName = namePool[Math.floor(Math.random() * namePool.length)];
+          element.text(randomName);
+          if (slotIndex === 1) {
+            playTickSound();
+          }
+        }, 80 + slotIndex * 20);
+      });
+    }
 
     setTimeout(() => {
       let winnerIndex;
@@ -738,12 +745,12 @@ $(function () {
 
         const $selectedRow = $(`#participantTable tbody tr[data-id='${winnerParticipant.id}']`);
         if ($selectedRow.length) {
-          $selectedRow[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          $selectedRow[0].scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
           $selectedRow.find("td").addClass("highlight-selected");
-          setTimeout(() => $selectedRow.find("td").removeClass("highlight-selected"), 4000);
+          setTimeout(() => $selectedRow.find("td").removeClass("highlight-selected"), prefersReducedMotion ? 1500 : 4000);
         }
       }
-    }, 2200);
+    }, spinDuration);
   });
 
   // Keyboard navigation support: Space or Enter hotkey to trigger spin when not in an input

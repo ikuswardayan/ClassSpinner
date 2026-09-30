@@ -235,3 +235,32 @@ input[type="checkbox"] {
     flex: 1;
   }
 }
+
+/* Accessibility: Support for prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .pulsate-effect {
+    animation: none !important;
+  }
+
+  .animate-tick {
+    animation: none !important;
+  }
+
+  .slot-winner {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .highlight-selected {
+    transition: none !important;
+  }
+}
